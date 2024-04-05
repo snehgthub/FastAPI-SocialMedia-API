@@ -9,6 +9,7 @@ url_object = URL.create(
     password=settings.database_password.get_secret_value(),
     host=settings.database_hostname,
     database=settings.database_name,
+    port=int(settings.database_port),
 )
 
 try:
