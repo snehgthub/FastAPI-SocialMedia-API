@@ -28,11 +28,13 @@ class Settings(BaseSettings):
     algorithm: str
     access_token_expire_minutes: int
 
-    @validator("*", pre=True)  # type: ignore
-    def load_secrets_if_needed(cls, v, values, field):  # type: ignore
-        if field.type_ is SecretStr:  # type: ignore
-            return load_secret(field.name)  # type: ignore
-        return v  # type: ignore
+    @classmethod
+    @validator("*")
+    def load_secrets_if_needed(cls, v, values):
+        for field_name, field in cls.__fields__.items():
+            if field.type_ is SecretStr and field_name in values:
+                values[field_name] = load_secret(field_name)
+        return v
 
 
 settings = Settings()  # type: ignore
